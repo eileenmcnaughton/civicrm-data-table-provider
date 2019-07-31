@@ -48,7 +48,7 @@ final class DataTable extends AbstractHttpProvider implements Provider
         $columns = $metadata['columns'];
         $this->columns = array_intersect($columns, ['city', 'state_code', 'latitude', 'longitude', 'timezone']);
         if (!\CRM_Utils_Rule::mysqlColumnNameOrAlias($tableName)
-          || !\CRM_Core_DAO::executeQuery("SHOW TABLES LIKE %1", [1=> [$tableName, 'String']])) {
+          || !\CRM_Core_DAO::singleValueQuery("SHOW TABLES LIKE %1", [1=> [$tableName, 'String']])) {
           throw new \Exception('Invalid table');
         }
 
@@ -58,7 +58,7 @@ final class DataTable extends AbstractHttpProvider implements Provider
     /**
      * {@inheritdoc}
      */
-    public function geocodeQuery(GeocodeQuery $query)
+    public function geocodeQuery(GeocodeQuery $query): Collection
     {
 
         $postalCode = substr(trim($query->getText()), 0, 5);
@@ -93,7 +93,7 @@ final class DataTable extends AbstractHttpProvider implements Provider
     /**
      * {@inheritdoc}
      */
-    public function reverseQuery(ReverseQuery $query)
+    public function reverseQuery(ReverseQuery $query): Collection
     {
         throw new UnsupportedOperation('The data table provider is not able to do reverse geocoding yet.');
     }
@@ -101,7 +101,7 @@ final class DataTable extends AbstractHttpProvider implements Provider
     /**
      * {@inheritdoc}
      */
-    public function getName()
+    public function getName(): string
     {
         return 'data_table';
     }
